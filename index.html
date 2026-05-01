@@ -13,9 +13,14 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:15px;line-height:1.7;overflow-x:hidden}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 4rem;background:rgba(13,13,13,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--white);letter-spacing:-0.02em;text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:1.5rem}
 .nav-links{display:flex;gap:2.5rem;list-style:none}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s}
 .nav-links a:hover{color:var(--accent)}
+.nav-icons{display:flex;gap:1rem;align-items:center}
+.nav-icons a{color:var(--muted);text-decoration:none;transition:color 0.2s;display:flex;align-items:center}
+.nav-icons a:hover{color:var(--accent)}
+.nav-icons svg{width:18px;height:18px;fill:currentColor}
 .lang-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.35rem 0.8rem;border-radius:2px;cursor:pointer;transition:all 0.2s}
 .lang-toggle:hover{border-color:var(--accent);color:var(--accent)}
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 4rem;gap:4rem;position:relative;overflow:hidden}
@@ -25,12 +30,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content
 .hero-name{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,5vw,4.5rem);line-height:1.0;color:var(--white);letter-spacing:-0.03em;margin-bottom:1.5rem;animation:fadeUp 0.6s 0.1s ease both}
 .hero-name span{color:var(--accent)}
 .hero-desc{color:var(--muted);font-size:0.9rem;max-width:460px;margin-bottom:2.5rem;animation:fadeUp 0.6s 0.2s ease both}
-.hero-cta{display:flex;gap:1rem;animation:fadeUp 0.6s 0.3s ease both}
-.btn{padding:0.75rem 1.8rem;font-family:'DM Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all 0.2s;cursor:pointer;border:none}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp 0.6s 0.3s ease both}
+.btn{padding:0.75rem 1.8rem;font-family:'DM Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all 0.2s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:0.5rem}
 .btn-primary{background:var(--accent);color:#0d0d0d;font-weight:500}
 .btn-primary:hover{background:#d4b88e;transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn svg{width:15px;height:15px;fill:currentColor}
 .hero-image{display:flex;justify-content:flex-end;align-items:center;padding-top:5rem;animation:fadeUp 0.8s 0.2s ease both}
 .photo-wrap{position:relative;width:380px;height:460px}
 .photo-wrap::before{content:'';position:absolute;top:16px;left:16px;right:-16px;bottom:-16px;border:1px solid rgba(200,169,126,0.2);border-radius:4px;z-index:0}
@@ -42,14 +48,13 @@ section{padding:7rem 4rem}
 .about-text{max-width:680px}
 .about-text p{color:var(--muted);margin-bottom:1.2rem;font-size:0.9rem}
 .about-text p strong{color:var(--text)}
-.exp-list{display:flex;flex-direction:column;gap:0}
+.exp-list{display:flex;flex-direction:column}
 .exp-item{padding:2rem 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:180px 1fr;gap:2rem}
 .exp-item:first-child{padding-top:0}
 .exp-item:last-child{border-bottom:none}
 .exp-date{font-size:0.72rem;color:var(--muted);letter-spacing:0.05em;padding-top:0.2rem;line-height:1.6}
 .exp-role{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--white);margin-bottom:0.25rem}
 .exp-company{font-size:0.78rem;color:var(--accent);margin-bottom:0.75rem;letter-spacing:0.05em}
-.exp-desc{font-size:0.85rem;color:var(--muted);line-height:1.7}
 .exp-bullets{list-style:none;margin-top:0.5rem}
 .exp-bullets li{font-size:0.83rem;color:var(--muted);line-height:1.7;padding-left:1rem;position:relative;margin-bottom:0.3rem}
 .exp-bullets li::before{content:'—';position:absolute;left:0;color:var(--accent);font-size:0.75rem}
@@ -67,18 +72,26 @@ section{padding:7rem 4rem}
 .edu-degree{font-size:0.88rem;color:var(--text);margin-bottom:0.2rem}
 .edu-school{font-size:0.78rem;color:var(--muted)}
 .contact-inner{max-width:600px}
-.contact-inner p{color:var(--muted);font-size:0.9rem;margin-bottom:2.5rem}
+.contact-links{display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2.5rem}
+.contact-link{display:inline-flex;align-items:center;gap:0.75rem;color:var(--muted);text-decoration:none;font-size:0.85rem;transition:color 0.2s}
+.contact-link:hover{color:var(--accent)}
+.contact-link svg{width:16px;height:16px;fill:currentColor;flex-shrink:0}
 .tally-wrap{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
 iframe{width:100%;border:none;min-height:420px;display:block}
 footer{padding:2.5rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 footer p{font-size:0.75rem;color:var(--muted)}
+.footer-right{display:flex;align-items:center;gap:2rem}
 .footer-links{display:flex;gap:2rem}
 .footer-links a{font-size:0.72rem;color:var(--muted);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s}
 .footer-links a:hover{color:var(--accent)}
+.footer-icons{display:flex;gap:1rem}
+.footer-icons a{color:var(--muted);text-decoration:none;transition:color 0.2s;display:flex}
+.footer-icons a:hover{color:var(--accent)}
+.footer-icons svg{width:16px;height:16px;fill:currentColor}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-@media(max-width:900px){nav{padding:1.2rem 2rem;gap:1rem}.hero{grid-template-columns:1fr;padding:0 2rem;text-align:center;gap:3rem}.hero-image{justify-content:center;padding-top:0}.photo-wrap{width:280px;height:340px}.hero-desc{margin:0 auto 2rem}.hero-cta{justify-content:center}section{padding:5rem 2rem}.exp-item{grid-template-columns:1fr;gap:0.5rem}footer{flex-direction:column;gap:1rem;text-align:center}.divider{margin:0 2rem}}
+@media(max-width:900px){nav{padding:1.2rem 2rem;gap:1rem}.nav-links{display:none}.hero{grid-template-columns:1fr;padding:0 2rem;text-align:center;gap:3rem}.hero-image{justify-content:center;padding-top:0}.photo-wrap{width:280px;height:340px}.hero-desc{margin:0 auto 2rem}.hero-cta{justify-content:center}section{padding:5rem 2rem}.exp-item{grid-template-columns:1fr;gap:0.5rem}footer{flex-direction:column;gap:1rem;text-align:center}.divider{margin:0 2rem}.footer-right{flex-direction:column;gap:1rem}}
 </style>
 </head>
 <body>
@@ -91,17 +104,31 @@ footer p{font-size:0.75rem;color:var(--muted)}
     <li><a href="#skills" data-en="Skills" data-fr="Compétences">Skills</a></li>
     <li><a href="#contact" data-en="Contact" data-fr="Contact">Contact</a></li>
   </ul>
-  <button class="lang-toggle" id="langBtn" onclick="toggleLang()">FR</button>
+  <div class="nav-right">
+    <div class="nav-icons">
+      <a href="https://linkedin.com/in/abbasumair-au" target="_blank" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://github.com/Abbasumair-au" target="_blank" aria-label="GitHub">
+        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+    </div>
+    <button class="lang-toggle" id="langBtn" onclick="toggleLang()">FR</button>
+  </div>
 </nav>
 
 <section class="hero" id="home">
   <div class="hero-content">
     <span class="hero-tag" data-en="DevOps · Cloud · Infrastructure" data-fr="DevOps · Cloud · Infrastructure">DevOps · Cloud · Infrastructure</span>
     <h1 class="hero-name">Hi, I'm<br><span>Umair Abbas</span></h1>
-    <p class="hero-desc" data-en="DevOps Engineer based in Paris. 5 years of experience on Azure, Kubernetes (AKS), Terraform and CI/CD. Available for freelance missions." data-fr="Ingénieur DevOps basé à Paris. 5 ans d'expérience sur Azure, Kubernetes (AKS), Terraform et CI/CD. Disponible pour des missions freelance.">DevOps Engineer based in Paris. 5 years of experience on Azure, Kubernetes (AKS), Terraform and CI/CD. Available for freelance missions.</p>
+    <p class="hero-desc" data-en="DevOps Engineer based in Paris. 5 years of experience on Azure, Kubernetes (AKS), Terraform and CI/CD." data-fr="Ingénieur DevOps basé à Paris. 5 ans d'expérience sur Azure, Kubernetes (AKS), Terraform et CI/CD.">DevOps Engineer based in Paris. 5 years of experience on Azure, Kubernetes (AKS), Terraform and CI/CD.</p>
     <div class="hero-cta">
       <a href="#experience" class="btn btn-primary" data-en="View Experience" data-fr="Voir l'expérience">View Experience</a>
       <a href="#contact" class="btn btn-ghost" data-en="Get in Touch" data-fr="Me contacter">Get in Touch</a>
+      <a href="https://linkedin.com/in/abbasumair-au" target="_blank" class="btn btn-ghost">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
     </div>
   </div>
   <div class="hero-image">
@@ -118,7 +145,7 @@ footer p{font-size:0.75rem;color:var(--muted)}
   <h2 class="section-title" data-en="Engineer by craft,<br>Paris by choice." data-fr="Ingénieur de métier,<br>Paris par choix.">Engineer by craft,<br>Paris by choice.</h2>
   <div class="about-text reveal">
     <p data-en="I'm a <strong>DevOps / Cloud Engineer</strong> with 5 years of experience on Azure, specialising in Kubernetes (AKS), Terraform, and CI/CD. I design, deploy, and operate secure, scalable, and high-performance Azure infrastructures." data-fr="Ingénieur <strong>DevOps / Cloud</strong> avec 5 ans d'expérience sur Azure, spécialisé en Kubernetes (AKS), Terraform et CI/CD. Je conçois, déploie et exploite des infrastructures Azure sécurisées, scalables et performantes.">I'm a <strong>DevOps / Cloud Engineer</strong> with 5 years of experience on Azure, specialising in Kubernetes (AKS), Terraform, and CI/CD. I design, deploy, and operate secure, scalable, and high-performance Azure infrastructures.</p>
-    <p data-en="I have deep expertise in Infrastructure as Code, deployment automation, and cloud and data platform management (Azure Data Factory, Databricks). I work in production environments (BUILD &amp; RUN) with a focus on reliability, observability, and continuous improvement." data-fr="Expertise en Infrastructure as Code, automatisation des déploiements et gestion de plateformes cloud et data (Azure Data Factory, Databricks). J'interviens en environnement de production (BUILD &amp; RUN), avec un focus sur la fiabilité, l'observabilité et l'amélioration continue.">I have deep expertise in Infrastructure as Code, deployment automation, and cloud and data platform management (Azure Data Factory, Databricks). I work in production environments (BUILD &amp; RUN) with a focus on reliability, observability, and continuous improvement.</p>
+    <p data-en="Deep expertise in Infrastructure as Code, deployment automation, and cloud and data platform management (Azure Data Factory, Databricks). I work in production environments (BUILD &amp; RUN) with a focus on reliability, observability, and continuous improvement." data-fr="Expertise en Infrastructure as Code, automatisation des déploiements et gestion de plateformes cloud et data (Azure Data Factory, Databricks). Intervention en environnement de production (BUILD &amp; RUN), avec un focus sur la fiabilité, l'observabilité et l'amélioration continue.">Deep expertise in Infrastructure as Code, deployment automation, and cloud and data platform management (Azure Data Factory, Databricks). I work in production environments (BUILD &amp; RUN) with a focus on reliability, observability, and continuous improvement.</p>
     <p data-en="Based in Paris, Île-de-France. Fluent in French and English." data-fr="Basé à Paris, Île-de-France. Français et anglais courants.">Based in Paris, Île-de-France. Fluent in French and English.</p>
   </div>
 </section>
@@ -129,7 +156,6 @@ footer p{font-size:0.75rem;color:var(--muted)}
   <div class="section-label" data-en="Experience" data-fr="Expérience">Experience</div>
   <h2 class="section-title" data-en="Where I've worked." data-fr="Mes expériences.">Where I've worked.</h2>
   <div class="exp-list reveal">
-
     <div class="exp-item">
       <div class="exp-date">03/2024 — <span data-en="Present" data-fr="Présent">Present</span><br>Paris, France</div>
       <div>
@@ -144,7 +170,6 @@ footer p{font-size:0.75rem;color:var(--muted)}
         </ul>
       </div>
     </div>
-
     <div class="exp-item">
       <div class="exp-date">06/2022 — 02/2024<br>Paris, France</div>
       <div>
@@ -153,13 +178,12 @@ footer p{font-size:0.75rem;color:var(--muted)}
         <ul class="exp-bullets">
           <li data-en="Setup of Azure Landing Zone (Azure Policies, RBAC, Blueprints), ensuring secure and compliant environments" data-fr="Mise en place d'une Azure Landing Zone (Azure Policies, RBAC, Blueprints), garantissant des environnements sécurisés et conformes">Setup of Azure Landing Zone (Azure Policies, RBAC, Blueprints), ensuring secure and compliant environments</li>
           <li data-en="Deployment automation via Terraform (IaC) and configuration management with Ansible" data-fr="Automatisation des déploiements via Terraform (IaC) et gestion de configuration avec Ansible">Deployment automation via Terraform (IaC) and configuration management with Ansible</li>
-          <li data-en="Design and administration of highly available Jenkins clusters (CI/CD), improving reliability" data-fr="Conception et administration de clusters Jenkins hautement disponibles (CI/CD), améliorant la fiabilité">Design and administration of highly available Jenkins clusters (CI/CD), improving reliability</li>
+          <li data-en="Design and administration of highly available Jenkins clusters, improving reliability" data-fr="Conception et administration de clusters Jenkins hautement disponibles, améliorant la fiabilité">Design and administration of highly available Jenkins clusters, improving reliability</li>
           <li data-en="Jenkins platform migration between Azure tenants with minimal downtime" data-fr="Migration de plateformes Jenkins entre tenants Azure avec un minimum d'indisponibilité">Jenkins platform migration between Azure tenants with minimal downtime</li>
           <li data-en="CI/CD pipelines (Jenkins, GitLab CI/CD) and production support N2/N3 incident management" data-fr="Pipelines CI/CD (Jenkins, GitLab CI/CD) et support RUN, gestion d'incidents critiques N2/N3">CI/CD pipelines (Jenkins, GitLab CI/CD) and production support N2/N3 incident management</li>
         </ul>
       </div>
     </div>
-
     <div class="exp-item">
       <div class="exp-date">06/2021 — 05/2022<br>Aix-en-Provence, France</div>
       <div>
@@ -168,26 +192,24 @@ footer p{font-size:0.75rem;color:var(--muted)}
         <ul class="exp-bullets">
           <li data-en="CI/CD pipelines (Azure DevOps) for App Services, Azure Functions and Azure Data Factory" data-fr="Pipelines CI/CD (Azure DevOps) pour App Services, Azure Functions et Azure Data Factory">CI/CD pipelines (Azure DevOps) for App Services, Azure Functions and Azure Data Factory</li>
           <li data-en="Infrastructure deployment via ARM Templates (IaC), ensuring automated and reproducible deployments" data-fr="Déploiement d'infrastructures via ARM Templates (IaC), assurant des déploiements automatisés et reproductibles">Infrastructure deployment via ARM Templates (IaC), ensuring automated and reproducible deployments</li>
-          <li data-en="Blue/green deployment strategies (App Service deployment slots), reducing production downtime" data-fr="Stratégies de déploiement blue/green (App Service deployment slots), réduisant les interruptions en production">Blue/green deployment strategies (App Service deployment slots), reducing production downtime</li>
-          <li data-en="Data workflow orchestration (Databricks, Azure Data Factory), improving processing performance" data-fr="Orchestration de workflows data (Databricks, Azure Data Factory), améliorant la performance des traitements">Data workflow orchestration (Databricks, Azure Data Factory), improving processing performance</li>
+          <li data-en="Blue/green deployment strategies (App Service slots), reducing production downtime" data-fr="Stratégies de déploiement blue/green (App Service deployment slots), réduisant les interruptions en production">Blue/green deployment strategies (App Service slots), reducing production downtime</li>
+          <li data-en="Data workflow orchestration (Databricks, Azure Data Factory)" data-fr="Orchestration de workflows data (Databricks, Azure Data Factory)">Data workflow orchestration (Databricks, Azure Data Factory)</li>
           <li data-en="Monitoring and observability (Azure Monitor, Application Insights)" data-fr="Mise en place de monitoring et observabilité (Azure Monitor, Application Insights)">Monitoring and observability (Azure Monitor, Application Insights)</li>
         </ul>
       </div>
     </div>
-
     <div class="exp-item">
       <div class="exp-date">11/2018 — 05/2021<br>Frankfurt, Germany</div>
       <div>
         <div class="exp-role" data-en="DevOps Engineer (part-time)" data-fr="Ingénieur DevOps (temps partiel)">DevOps Engineer (part-time)</div>
         <div class="exp-company">TechRoad GmbH</div>
         <ul class="exp-bullets">
-          <li data-en="Azure infrastructure deployment for multiple clients (cloud, IaC)" data-fr="Déploiement d'infrastructures Azure pour plusieurs clients (cloud, IaC)">Azure infrastructure deployment for multiple clients (cloud, IaC)</li>
+          <li data-en="Azure infrastructure deployment for multiple clients" data-fr="Déploiement d'infrastructures Azure pour plusieurs clients">Azure infrastructure deployment for multiple clients</li>
           <li data-en="Containerisation of Python applications with Docker and deployment on Azure" data-fr="Conteneurisation d'applications Python avec Docker et déploiement sur Azure">Containerisation of Python applications with Docker and deployment on Azure</li>
           <li data-en="CI/CD pipelines (GitHub Actions, GitLab CI/CD), automating build and deployment processes" data-fr="Pipelines CI/CD (GitHub Actions, GitLab CI/CD), automatisant les processus de build et déploiement">CI/CD pipelines (GitHub Actions, GitLab CI/CD), automating build and deployment processes</li>
         </ul>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -207,10 +229,10 @@ footer p{font-size:0.75rem;color:var(--muted)}
     </div>
     <div class="skill-block">
       <div class="skill-cat">CI/CD &amp; GitOps</div>
-      <div class="skill-items">Azure DevOps · GitHub Actions<br>GitLab CI/CD · Jenkins<br>ArgoCD</div>
+      <div class="skill-items">Azure DevOps · GitHub Actions<br>GitLab CI/CD · Jenkins · ArgoCD</div>
     </div>
     <div class="skill-block">
-      <div class="skill-cat" data-en="Infrastructure as Code" data-fr="Infrastructure as Code">Infrastructure as Code</div>
+      <div class="skill-cat">Infrastructure as Code</div>
       <div class="skill-items">Terraform · ARM Templates<br>Ansible</div>
     </div>
     <div class="skill-block">
@@ -222,30 +244,13 @@ footer p{font-size:0.75rem;color:var(--muted)}
       <div class="skill-items">RBAC · Azure Policies · SonarQube<br>Python · Bash · PowerShell<br>Linux · Git</div>
     </div>
   </div>
-
   <div class="cert-list reveal">
-    <div class="cert-card">
-      <div class="cert-badge">CKA</div>
-      <div class="cert-name" data-en="Certified Kubernetes Administrator" data-fr="Certified Kubernetes Administrator">Certified Kubernetes Administrator</div>
-    </div>
-    <div class="cert-card">
-      <div class="cert-badge">AZ-305</div>
-      <div class="cert-name" data-en="Azure Solutions Architect Expert" data-fr="Azure Solutions Architect Expert">Azure Solutions Architect Expert</div>
-    </div>
-    <div class="cert-card">
-      <div class="cert-badge">AZ-400</div>
-      <div class="cert-name" data-en="Azure DevOps Engineer Expert" data-fr="Azure DevOps Engineer Expert">Azure DevOps Engineer Expert</div>
-    </div>
-    <div class="cert-card">
-      <div class="cert-badge">AZ-104</div>
-      <div class="cert-name" data-en="Azure Administrator Associate" data-fr="Azure Administrator Associate">Azure Administrator Associate</div>
-    </div>
-    <div class="cert-card">
-      <div class="cert-badge">TF</div>
-      <div class="cert-name" data-en="HashiCorp Terraform Associate" data-fr="HashiCorp Terraform Associate">HashiCorp Terraform Associate</div>
-    </div>
+    <div class="cert-card"><div class="cert-badge">CKA</div><div class="cert-name">Certified Kubernetes Administrator</div></div>
+    <div class="cert-card"><div class="cert-badge">AZ-305</div><div class="cert-name">Azure Solutions Architect Expert</div></div>
+    <div class="cert-card"><div class="cert-badge">AZ-400</div><div class="cert-name">Azure DevOps Engineer Expert</div></div>
+    <div class="cert-card"><div class="cert-badge">AZ-104</div><div class="cert-name">Azure Administrator Associate</div></div>
+    <div class="cert-card"><div class="cert-badge">TF</div><div class="cert-name">HashiCorp Terraform Associate</div></div>
   </div>
-
   <div class="edu-list reveal">
     <div class="edu-item">
       <div class="edu-dot"></div>
@@ -270,7 +275,22 @@ footer p{font-size:0.75rem;color:var(--muted)}
   <div class="section-label" data-en="Contact" data-fr="Contact">Contact</div>
   <h2 class="section-title" data-en="Let's talk." data-fr="Discutons.">Let's talk.</h2>
   <div class="contact-inner reveal">
-    <p data-en="Available for freelance DevOps missions in Paris and remote. Get in touch below." data-fr="Disponible pour des missions DevOps freelance à Paris et en remote. Contactez-moi ci-dessous.">Available for freelance DevOps missions in Paris and remote. Get in touch below.</p>
+    <div class="contact-links">
+      <a href="mailto:abbasumair.au@gmail.com" class="contact-link">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        abbasumair.au@gmail.com
+      </a>
+      <a href="https://linkedin.com/in/abbasumair-au" target="_blank" class="contact-link">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        linkedin.com/in/abbasumair-au
+      </a>
+      <a href="https://github.com/Abbasumair-au" target="_blank" class="contact-link">
+        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        github.com/Abbasumair-au
+      </a>
+    </div>
+    <p data-en="Or send me a message directly:" data-fr="Ou envoyez-moi un message directement :">Or send me a message directly:</p>
+    <br>
     <div class="tally-wrap">
       <iframe src="https://tally.so/embed/mJQ9kK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" title="Contact form"></iframe>
     </div>
@@ -279,16 +299,28 @@ footer p{font-size:0.75rem;color:var(--muted)}
 
 <footer>
   <p>© Umair Abbas 2025</p>
-  <div class="footer-links">
-    <a href="#about" data-en="About" data-fr="À propos">About</a>
-    <a href="#experience" data-en="Experience" data-fr="Expérience">Experience</a>
-    <a href="#skills" data-en="Skills" data-fr="Compétences">Skills</a>
-    <a href="#contact" data-en="Contact" data-fr="Contact">Contact</a>
+  <div class="footer-right">
+    <div class="footer-icons">
+      <a href="https://linkedin.com/in/abbasumair-au" target="_blank" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://github.com/Abbasumair-au" target="_blank" aria-label="GitHub">
+        <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      <a href="mailto:abbasumair.au@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </a>
+    </div>
+    <div class="footer-links">
+      <a href="#about" data-en="About" data-fr="À propos">About</a>
+      <a href="#experience" data-en="Experience" data-fr="Expérience">Experience</a>
+      <a href="#skills" data-en="Skills" data-fr="Compétences">Skills</a>
+      <a href="#contact" data-en="Contact" data-fr="Contact">Contact</a>
+    </div>
   </div>
 </footer>
 
 <script>
-// Language detection & toggle
 const userLang = navigator.language || navigator.userLanguage;
 let currentLang = userLang.startsWith('fr') ? 'fr' : 'en';
 
@@ -296,42 +328,23 @@ function applyLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
   document.getElementById('langBtn').textContent = lang === 'fr' ? 'EN' : 'FR';
-
-  // Hero name label
   const heroName = document.querySelector('.hero-name');
   if (heroName) heroName.innerHTML = lang === 'fr' ? "Bonjour, je suis<br><span>Umair Abbas</span>" : "Hi, I'm<br><span>Umair Abbas</span>";
-
-  // All data-en / data-fr elements
   document.querySelectorAll('[data-' + lang + ']').forEach(el => {
-    const val = el.getAttribute('data-' + lang);
-    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'BUTTON') {
-      el.placeholder = val;
-    } else {
-      el.innerHTML = val;
-    }
-  });
-
-  // Section titles with <br>
-  document.querySelectorAll('.section-title[data-fr]').forEach(el => {
     el.innerHTML = el.getAttribute('data-' + lang);
   });
 }
 
-function toggleLang() {
-  applyLang(currentLang === 'fr' ? 'en' : 'fr');
-}
+function toggleLang() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); }
 
-// Init
 applyLang(currentLang);
 
-// Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
 const obs = new IntersectionObserver(e => {
   e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 reveals.forEach(el => obs.observe(el));
 
-// Active nav
 const secs = document.querySelectorAll('section[id]');
 const links = document.querySelectorAll('.nav-links a');
 window.addEventListener('scroll', () => {

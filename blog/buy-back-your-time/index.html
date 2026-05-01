@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Back Your Time — Umair Abbas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0d;--surface:#141414;--border:#1f1f1f;--text:#e8e8e0;--muted:#6b6b60;--accent:#c8a97e;--accent2:#7eb8c8;--white:#f5f5f0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.8;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 4rem;background:rgba(13,13,13,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--white);letter-spacing:-0.02em;text-decoration:none}
+.nav-back{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;font-family:'DM Mono',monospace;transition:color 0.2s}
+.nav-back:hover{color:var(--accent)}
+article{max-width:680px;margin:0 auto;padding:9rem 2rem 5rem}
+.post-meta{margin-bottom:3rem}
+.post-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem}
+.post-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3rem);color:var(--white);letter-spacing:-0.02em;line-height:1.1;margin-bottom:1.5rem}
+.post-date{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.05em}
+.post-divider{height:1px;background:var(--border);margin:3rem 0}
+.post-body{color:#c8c8c0;font-size:1rem;line-height:1.85;font-weight:300}
+.post-body p{margin-bottom:1.6rem}
+.post-body h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--white);margin:3rem 0 1rem;letter-spacing:-0.01em}
+.post-body h3{font-family:'Syne',sans-serif;font-weight:600;font-size:1.1rem;color:var(--text);margin:2rem 0 0.75rem}
+.post-body strong{color:var(--text);font-weight:500}
+.post-body em{color:var(--muted);font-style:italic}
+.post-body ul,.post-body ol{margin:0 0 1.6rem 1.2rem}
+.post-body li{margin-bottom:0.5rem;color:#c8c8c0}
+.post-body blockquote{border-left:2px solid var(--accent);padding:0.5rem 0 0.5rem 1.5rem;margin:2rem 0;color:var(--muted);font-style:italic}
+.post-body .highlight{background:rgba(200,169,126,0.08);border:1px solid rgba(200,169,126,0.15);border-radius:4px;padding:1.5rem;margin:2rem 0}
+.post-body .highlight p{margin-bottom:0;color:var(--text)}
+.ladder{display:grid;gap:0;margin:2rem 0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.ladder-item{display:flex;align-items:center;gap:1.5rem;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.ladder-item:last-child{border-bottom:none}
+.ladder-value{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:0.9rem;min-width:90px}
+.ladder-desc{font-size:0.85rem;color:var(--muted)}
+.comments-section{margin-top:5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.comments-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;color:var(--white);margin-bottom:2rem}
+footer{padding:2.5rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:4rem}
+footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
+.footer-icons{display:flex;gap:1rem}
+.footer-icons a{color:var(--muted);text-decoration:none;transition:color 0.2s;display:flex}
+.footer-icons a:hover{color:var(--accent)}
+.footer-icons svg{width:16px;height:16px;fill:currentColor}
+@media(max-width:768px){nav{padding:1.2rem 2rem}article{padding:7rem 1.5rem 4rem}footer{padding:2rem;flex-direction:column;gap:1rem}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://abbasumair.com" class="nav-logo">UA</a>
+  <a href="https://blog.abbasumair.com" class="nav-back">← All posts</a>
+</nav>
+
+<article>
+  <div class="post-meta">
+    <span class="post-tag">Book Summary</span>
+    <h1 class="post-title">Buy Back Your Time</h1>
+    <div class="post-date">September 19, 2025 · by Umair Abbas</div>
+  </div>
+
+  <div class="post-divider"></div>
+
+  <div class="post-body">
+
+    <p>I picked up <em>Buy Back Your Time</em> by Dan Martell at a point where I was doing everything myself — infrastructure, pipelines, oncall, documentation, side projects. The kind of busy that feels productive but isn't really going anywhere.</p>
+
+    <p>The book didn't tell me anything I hadn't heard before. But it organized the ideas in a way that actually made me act on them. Here's what stuck.</p>
+
+    <h2>The core idea</h2>
+
+    <p>Most people try to get ahead by working more. Martell's argument is the opposite: <strong>the real move is to buy back your time</strong> — by delegating, outsourcing, or automating anything that isn't your highest-value work.</p>
+
+    <p>The question he keeps coming back to is simple: <em>Is this the best use of my time right now?</em> It sounds obvious. But answering it honestly is harder than it seems.</p>
+
+    <h2>The Time-Value Ladder</h2>
+
+    <p>Not all tasks are equal. Martell breaks them down by the dollar value they generate:</p>
+
+    <div class="ladder">
+      <div class="ladder-item"><div class="ladder-value">$10/hr</div><div class="ladder-desc">Admin, errands, repetitive work</div></div>
+      <div class="ladder-item"><div class="ladder-value">$100/hr</div><div class="ladder-desc">Project management, customer support</div></div>
+      <div class="ladder-item"><div class="ladder-value">$1,000/hr</div><div class="ladder-desc">Strategy, sales, product development</div></div>
+      <div class="ladder-item"><div class="ladder-value">$10,000/hr</div><div class="ladder-desc">Vision, unique insight, brand-building</div></div>
+    </div>
+
+    <p>The goal is to fire yourself from the bottom rungs as fast as possible — and keep climbing. Every hour you spend on $10 work is an hour you're not spending on $1,000 work.</p>
+
+    <h2>The Replacement Ladder</h2>
+
+    <p>Where to start? Martell's answer is more practical than most: begin with your personal life, not your business.</p>
+
+    <p>Outsource laundry, groceries, cleaning first. It feels uncomfortable — like a luxury you haven't earned. But that discomfort is exactly the point. Once you see that paying someone else $30 to clean your flat frees up two hours for actual deep work, the logic becomes hard to argue with.</p>
+
+    <p>Then move into your work: delegate email, calendar, admin. Build SOPs so others can do things the way you'd do them. Keep climbing until your time is spent almost entirely on the work only you can do.</p>
+
+    <h2>The Pain Line</h2>
+
+    <p>There's a moment in every delegation where you want to take it back. The other person does it differently. Maybe slightly worse. It feels easier to just do it yourself.</p>
+
+    <p>Martell calls this the pain line — and says most people stop right here. That's why they stay stuck. Pushing through isn't about lowering your standards. It's about accepting that good enough from someone else is worth more than perfect from you, when your time has better uses.</p>
+
+    <h2>The Buyback Loop</h2>
+
+    <p>The actual process Martell recommends is a three-step loop you run continuously:</p>
+
+    <ol>
+      <li><strong>Audit</strong> — Track where your time actually goes. Not where you think it goes. Where it actually goes.</li>
+      <li><strong>Transfer</strong> — Systemize and delegate the low-value work. Write the SOP, hand it off, resist the urge to take it back.</li>
+      <li><strong>Fill</strong> — Reinvest the freed time into high-value work, or rest that makes your high-value work better.</li>
+    </ol>
+
+    <p>The loop only works if the third step is intentional. Most people audit and delegate, then fill the freed time with more low-value work. That's just staying busy in a different way.</p>
+
+    <h2>What I'm actually taking from this</h2>
+
+    <div class="highlight">
+      <p>The mindset shift isn't really about productivity. It's about seeing delegation as an investment rather than an expense — buying freedom and energy, not just output.</p>
+    </div>
+
+    <p>For me, in a DevOps context: this maps directly to automation. Every manual process I still run by hand is a $10/hr task I haven't delegated to a script yet. Every runbook that only exists in my head is a bottleneck I'm choosing to keep.</p>
+
+    <p>The book is worth reading if you're at a point where you're busy but not sure the busy is taking you anywhere. It won't tell you anything revolutionary — but it might finally make you do the obvious things you've been putting off.</p>
+
+  </div>
+
+  <div class="comments-section">
+    <div class="comments-title">Discussion</div>
+    <script src="https://giscus.app/client.js"
+      data-repo="Abbasumair-au/abbasumair-au.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnk0MDIzODg3Mjc="
+      data-category="General"
+      data-category-id="DIC_kwDOF_v2984C8IiY"
+      data-mapping="url"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</article>
+
+<footer>
+  <p>© Umair Abbas 2025</p>
+  <div class="footer-icons">
+    <a href="https://linkedin.com/in/abbasumair-au" target="_blank"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://github.com/Abbasumair-au" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </div>
+</footer>
+
+</body>
+</html>

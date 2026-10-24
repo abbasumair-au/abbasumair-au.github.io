@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Production-Shaped Platform on One 8 GB VM — Umair Abbas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0d;--surface:#141414;--border:#1f1f1f;--text:#e8e8e0;--muted:#6b6b60;--accent:#c8a97e;--accent2:#7eb8c8;--white:#f5f5f0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.8;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 4rem;background:rgba(13,13,13,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--white);letter-spacing:-0.02em;text-decoration:none}
+.nav-back{color:var(--muted);text-decoration:none;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;font-family:'DM Mono',monospace;transition:color 0.2s}
+.nav-back:hover{color:var(--accent)}
+article{max-width:680px;margin:0 auto;padding:9rem 2rem 5rem}
+.post-meta{margin-bottom:3rem}
+.post-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem}
+.post-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3rem);color:var(--white);letter-spacing:-0.02em;line-height:1.1;margin-bottom:1.5rem}
+.post-date{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.05em}
+.post-divider{height:1px;background:var(--border);margin:3rem 0}
+.post-body{color:#c8c8c0;font-size:1rem;line-height:1.85;font-weight:300}
+.post-body p{margin-bottom:1.6rem}
+.post-body h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--white);margin:3rem 0 1rem;letter-spacing:-0.01em}
+.post-body h3{font-family:'Syne',sans-serif;font-weight:600;font-size:1.1rem;color:var(--text);margin:2rem 0 0.75rem}
+.post-body strong{color:var(--text);font-weight:500}
+.post-body em{color:var(--muted);font-style:italic}
+.post-body ul,.post-body ol{margin:0 0 1.6rem 1.2rem}
+.post-body li{margin-bottom:0.5rem;color:#c8c8c0}
+.post-body blockquote{border-left:2px solid var(--accent);padding:0.5rem 0 0.5rem 1.5rem;margin:2rem 0;color:var(--muted);font-style:italic}
+.post-body .highlight{background:rgba(200,169,126,0.08);border:1px solid rgba(200,169,126,0.15);border-radius:4px;padding:1.5rem;margin:2rem 0}
+.post-body .highlight p{margin-bottom:0;color:var(--text)}
+.ladder{display:grid;gap:0;margin:2rem 0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.ladder-item{display:flex;align-items:center;gap:1.5rem;padding:1rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.ladder-item:last-child{border-bottom:none}
+.ladder-value{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:0.9rem;min-width:90px}
+.ladder-desc{font-size:0.85rem;color:var(--muted)}
+.post-body code{font-family:'DM Mono',monospace;font-size:0.85em;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:0.1em 0.35em;color:var(--accent)}
+.post-body figure{margin:2.5rem 0}
+.post-body figure img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:4px}
+.post-body figcaption{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:0.75rem;line-height:1.6}
+.comments-section{margin-top:5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.comments-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;color:var(--white);margin-bottom:2rem}
+footer{padding:2.5rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:4rem}
+footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
+.footer-icons{display:flex;gap:1rem}
+.footer-icons a{color:var(--muted);text-decoration:none;transition:color 0.2s;display:flex}
+.footer-icons a:hover{color:var(--accent)}
+.footer-icons svg{width:16px;height:16px;fill:currentColor}
+@media(max-width:768px){nav{padding:1.2rem 2rem}article{padding:7rem 1.5rem 4rem}footer{padding:2rem;flex-direction:column;gap:1rem}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://abbasumair.com" class="nav-logo">UA</a>
+  <a href="/blog" class="nav-back">← All posts</a>
+</nav>
+
+<article>
+  <div class="post-meta">
+    <span class="post-tag">Platform Engineering · Homelab</span>
+    <h1 class="post-title">A Production-Shaped Platform on One 8&nbsp;GB VM</h1>
+    <div class="post-date">October 24, 2026 · by Umair Abbas</div>
+  </div>
+
+  <div class="post-divider"></div>
+
+  <div class="post-body">
+
+    <p>I wanted a lab that behaves like a real platform: GitOps, a service mesh, a secrets manager, metrics, and single sign-on. But I only had one OVH VM with 8&nbsp;GB of RAM. This is the story of getting that stack to converge on a box that small, and everything that broke on the way.</p>
+
+    <p>I paired with an AI coding agent that ran directly on the VM for the hands-on work. Every change still went through a small pull request that I reviewed and merged. The repo ended the session with 32 PRs, and that count is part of the story.</p>
+
+    <h2>The stack</h2>
+
+    <ul>
+      <li><strong>k3s</strong> with flannel, kube-proxy, Traefik and servicelb all switched off.</li>
+      <li><strong>Cilium</strong> as CNI and kube-proxy replacement, with default-deny network policies.</li>
+      <li><strong>Istio ambient</strong> (ztunnel, istio-cni, istiod) with <strong>Gateway API</strong> as ingress. No sidecars, which matters on 8&nbsp;GB.</li>
+      <li><strong>Argo CD</strong> in an app-of-apps layout. Everything else is installed from Git.</li>
+      <li><strong>cert-manager</strong> with a self-signed CA for a wildcard certificate.</li>
+      <li><strong>Vault</strong> (single node) plus <strong>External Secrets</strong>, so no secret ever lives in Git.</li>
+      <li><strong>VictoriaMetrics + Grafana</strong> for metrics, and <strong>podinfo</strong> as a demo workload.</li>
+      <li><strong>Microsoft Entra ID</strong> as the OIDC provider for Grafana and Argo CD.</li>
+    </ul>
+
+    <p>Nothing is exposed to the internet. The Istio gateway listens on a NodePort and is reached over <strong>Tailscale</strong>. For hostnames I skipped DNS entirely: <code>grafana.&lt;tailnet-ip&gt;.nip.io</code> resolves to the tailnet address, so I get real hostnames, real TLS and zero registrar work.</p>
+
+    <h2>Everything is a pull request</h2>
+
+    <p>The rules I set for the repo were simple: one branch and one PR per intent, under 400 lines, a body that explains the why and the rollback, requests and limits on every workload, and nothing secret in Git. Argo CD then reconciles <code>main</code> into the cluster.</p>
+
+    <p>That discipline paid off. When a change broke something, the fix was one reviewable diff, and the history reads like a log of lessons learned.</p>
+
+    <figure>
+      <img src="img/argocd-apps.png" alt="Argo CD applications list showing the platform apps Healthy and Synced" loading="lazy">
+      <figcaption>Argo CD: the platform is a set of Helm and Git apps, all Healthy. The two OutOfSync entries are cosmetic webhook and Gateway diffs.</figcaption>
+    </figure>
+
+    <h2>What broke, and what it taught me</h2>
+
+    <h3>1. The firewall was eating the CNI</h3>
+    <p>With UFW enabled, pod traffic silently vanished. Cilium's interfaces (<code>cilium_host</code> and the <code>lxc*</code> devices) need explicit allow rules. The symptom was a node that looked fine and pods that could not talk to anything.</p>
+
+    <h3>2. A DNS rule that blackholed DNS</h3>
+    <p>External Secrets reported <code>ClusterSecretStore InvalidProviderConfig</code> with <em>context deadline exceeded</em>. The Vault login was timing out, and the root cause was DNS. My baseline policy used Cilium's L7 DNS rules (<code>rules.dns</code> with a wildcard), and in namespaces that are not in the ambient mesh that rule path dropped queries. Switching the baseline to plain L4 DNS egress fixed it. I proved it in a scratch namespace before touching the real policies.</p>
+
+    <h3>3. Ambient mesh needs HBONE and probe SNAT</h3>
+    <p>podinfo returned 503 through the gateway even though the pod was healthy. In ambient mode the gateway talks to workloads over HBONE on <strong>TCP 15008</strong>, and my default-deny policy blocked it. I also had to allow the kubelet probe source address (<code>169.254.7.127</code>, the ztunnel SNAT) or readiness probes failed. The route to the app has more hops than it looks like: Tailscale, NodePort, gateway, ztunnel, pod.</p>
+
+    <figure>
+      <img src="img/podinfo.png" alt="podinfo greeting page served through the Istio gateway" loading="lazy">
+      <figcaption>podinfo, served end to end through Tailscale, the Istio Gateway and the ambient mesh.</figcaption>
+    </figure>
+
+    <h3>4. Death by OOMKill</h3>
+    <p>8&nbsp;GB goes quickly when a Kubernetes control plane, a mesh and a metrics stack share a node. In order, the OOM kills were: the Argo CD application controller, VictoriaMetrics <code>vmsingle</code>, <code>vmagent</code>, and finally Grafana itself, which is CPU and memory hungry while it loads its bundled dashboards.</p>
+    <p>The two changes that mattered most were setting honest requests and limits everywhere, and dropping the very high-cardinality kube-apiserver histogram series (<code>apiserver_request_duration_seconds_bucket</code> and friends) at scrape time. That alone removed a large share of the metrics volume. The funniest culprit was my own screenshot tooling: a headless Chrome was the biggest process on the box more than once, so it now gets killed after every run.</p>
+
+    <h3>5. Vault is a manual step, on purpose</h3>
+    <p>Vault runs as a single node with one key share, initialised and unsealed by hand. The init output stays on the host and never touches Git. External Secrets then pulls values into Kubernetes secrets through a <code>ClusterSecretStore</code> using Kubernetes auth. The trade-off is that Vault needs unsealing after every reboot. For a lab I accept that; for production I would use auto-unseal.</p>
+
+    <figure>
+      <img src="img/vault-login.png" alt="Vault UI sign-in page served over the gateway" loading="lazy">
+      <figcaption>The Vault UI behind the same gateway, with TLS from the lab CA.</figcaption>
+    </figure>
+
+    <h2>Single sign-on with Entra ID</h2>
+
+    <p>Grafana and Argo CD both log in through Entra ID using OIDC. The client secrets are created in Entra, stored in Vault, and delivered to the pods by External Secrets. They never appear in the repo.</p>
+
+    <p>The sharp edges were small but real:</p>
+    <ul>
+      <li>Argo CD only resolves <code>$secretname:key</code> references from secrets that carry the label <code>app.kubernetes.io/part-of: argocd</code>. The ExternalSecret template has to add it.</li>
+      <li>Right after <code>az ad app create</code>, follow-up calls can fail because the new app has not replicated yet. Retry rather than assume a bug.</li>
+      <li>In a tenant that enforces MFA, a plain <code>az login</code> is not enough. Use <code>--tenant</code> with <code>--use-device-code</code>.</li>
+      <li>Argo CD's own values are applied by Helm, not by Git, so changing them means a <code>helm upgrade</code> on the node.</li>
+    </ul>
+
+    <figure>
+      <img src="img/grafana-login.png" alt="Grafana login page with a Sign in with Microsoft Entra ID button" loading="lazy">
+      <figcaption>Grafana now offers “Sign in with Microsoft Entra ID” next to the local admin login.</figcaption>
+    </figure>
+
+    <h2>What I would tell my past self</h2>
+
+    <div class="highlight">
+      <p>On a small node, the platform is not the hard part. The hard part is the budget: every default-deny policy, every mesh hop and every memory limit is a decision you have to make on purpose.</p>
+    </div>
+
+    <ul>
+      <li>Test network policy changes in a scratch namespace before they hit shared ones.</li>
+      <li>Set requests <em>and</em> limits from day one, then raise limits only when you see an OOMKill.</li>
+      <li>Drop metrics you will never query. It is the cheapest memory you will ever save.</li>
+      <li>Keep secrets out of Git by design, not by discipline: Vault plus External Secrets made that automatic.</li>
+      <li>Small PRs turn debugging into documentation.</li>
+    </ul>
+
+    <p>Next up: back up the Vault init material properly, rotate the Entra client secrets before they expire, and bring the optional observability integrations back once the memory budget allows it.</p>
+
+  </div>
+
+  <div class="comments-section">
+    <div class="comments-title">Discussion</div>
+    <script src="https://giscus.app/client.js"
+      data-repo="Abbasumair-au/abbasumair-au.github.io"
+      data-repo-id="MDEwOlJlcG9zaXRvcnk0MDIzODg3Mjc="
+      data-category="General"
+      data-category-id="DIC_kwDOF_v2984C8IiY"
+      data-mapping="url"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="bottom"
+      data-theme="dark"
+      data-lang="en"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</article>
+
+
+<footer>
+  <p>© Umair Abbas 2026</p>
+  <div class="footer-icons">
+    <a href="https://linkedin.com/in/abbasumair-au" target="_blank"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <a href="https://github.com/Abbasumair-au" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </div>
+</footer>
+
+</body>
+</html>

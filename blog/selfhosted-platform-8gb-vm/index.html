@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Production-Shaped Platform on One 8 GB VM — Umair Abbas</title>
+<meta name="description" content="How I ran GitOps, a service mesh, Vault, metrics and Entra ID single sign-on on one 8 GB VM, and the five things that broke on the way: firewall, DNS policy, ambient mesh, OOM kills and secrets.">
+<link rel="canonical" href="https://abbasumair.com/blog/selfhosted-platform-8gb-vm/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Production-Shaped Platform on One 8 GB VM">
+<meta property="og:description" content="GitOps, Istio ambient, Vault and Entra ID SSO on a single 8 GB VM: the architecture, the trade-offs and five things that broke.">
+<meta property="og:url" content="https://abbasumair.com/blog/selfhosted-platform-8gb-vm/">
+<meta property="og:image" content="https://abbasumair.com/blog/selfhosted-platform-8gb-vm/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:author" content="Umair Abbas">
+<meta property="article:published_time" content="2026-10-24">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A Production-Shaped Platform on One 8 GB VM">
+<meta name="twitter:description" content="GitOps, Istio ambient, Vault and Entra ID SSO on a single 8 GB VM, and what broke on the way.">
+<meta name="twitter:image" content="https://abbasumair.com/blog/selfhosted-platform-8gb-vm/img/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -41,6 +56,34 @@ article{max-width:680px;margin:0 auto;padding:9rem 2rem 5rem}
 .post-body figure{margin:2.5rem 0}
 .post-body figure img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:4px}
 .post-body figcaption{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:0.75rem;line-height:1.6}
+.post-body pre{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:4px;padding:1rem 1.2rem;margin:0 0 1.6rem;overflow-x:auto;line-height:1.6}
+.post-body pre code{background:none;border:none;padding:0;color:#c8c8c0;font-size:0.8rem;white-space:pre}
+.post-body pre .c{color:var(--muted)}
+.post-body pre .k{color:var(--accent2)}
+.post-body pre .e{color:#d98c7a}
+.post-body .tldr{background:rgba(126,184,200,0.06);border:1px solid rgba(126,184,200,0.2);border-radius:4px;padding:1.4rem 1.6rem;margin:0 0 2.5rem}
+.post-body .tldr h2{margin:0 0 0.75rem;font-size:0.7rem;font-family:'DM Mono',monospace;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent2);font-weight:400}
+.post-body .tldr p{margin-bottom:0.8rem;color:var(--text)}
+.post-body .tldr ul{margin:0 0 0 1.2rem}
+.post-body .tldr li{margin-bottom:0.3rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:2rem 0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.stat{padding:1rem;background:var(--surface);border-right:1px solid var(--border);text-align:center}
+.stat:last-child{border-right:none}
+.stat b{display:block;font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:1.4rem;line-height:1.2}
+.stat span{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase}
+.table-wrap{overflow-x:auto;margin:0 0 1.6rem}
+.post-body table{width:100%;border-collapse:collapse;font-size:0.9rem}
+.post-body th,.post-body td{text-align:left;padding:0.6rem 0.9rem;border-bottom:1px solid var(--border)}
+.post-body th{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.post-body td.num,.post-body th.num{text-align:right;font-family:'DM Mono',monospace}
+.post-body tr.total td{color:var(--white);border-top:1px solid var(--accent);border-bottom:none}
+.post-body a{color:var(--accent2)}
+.post-body .fix{margin:0 0 1.6rem}
+.post-body .fix dt{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-top:0.8rem}
+.post-body .fix dd{margin:0}
+.read-time{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.05em}
+.post-body .cta{border-top:1px solid var(--border);margin-top:3rem;padding-top:2rem}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(2){border-right:none}.stat:nth-child(-n+2){border-bottom:1px solid var(--border)}}
 .comments-section{margin-top:5rem;padding-top:3rem;border-top:1px solid var(--border)}
 .comments-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;color:var(--white);margin-bottom:2rem}
 footer{padding:2.5rem 4rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-top:4rem}
@@ -63,16 +106,42 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
   <div class="post-meta">
     <span class="post-tag">Platform Engineering · Homelab</span>
     <h1 class="post-title">A Production-Shaped Platform on One 8&nbsp;GB VM</h1>
-    <div class="post-date">October 24, 2026 · by Umair Abbas</div>
+    <div class="post-date">October 24, 2026 · by Umair Abbas · <span class="read-time">9 min read</span></div>
   </div>
 
   <div class="post-divider"></div>
 
   <div class="post-body">
 
-    <p>I wanted a lab that behaves like a real platform: GitOps, a service mesh, a secrets manager, metrics, and single sign-on. But I only had one OVH VM with 8&nbsp;GB of RAM. This is the story of getting that stack to converge on a box that small, and everything that broke on the way.</p>
+    <div class="tldr">
+      <h2>TL;DR</h2>
+      <p>I wanted a lab that behaves like a real platform, on one 8&nbsp;GB OVH VM. It now runs GitOps, a service mesh, a secrets manager, metrics and single sign-on, and it reconciles itself from Git. Getting there meant five failures, mostly about firewalls, network policy and memory.</p>
+      <ul>
+        <li><strong>Result:</strong> 15 Argo CD apps, 32 pods, Entra ID login for Grafana and Argo CD, nothing exposed to the internet.</li>
+        <li><strong>Cost:</strong> memory sits near 90%. Every limit is a deliberate decision.</li>
+        <li><strong>Biggest lesson:</strong> on a small node, the budget is the hard part, not the tooling.</li>
+      </ul>
+    </div>
 
-    <p>Every change went through a small pull request that I reviewed and merged. The repo ended up with 32 PRs, and that count is part of the story.</p>
+    <div class="stats">
+      <div class="stat"><b>8&nbsp;GB</b><span>one node</span></div>
+      <div class="stat"><b>15</b><span>Argo CD apps</span></div>
+      <div class="stat"><b>33</b><span>pull requests</span></div>
+      <div class="stat"><b>~90%</b><span>memory used</span></div>
+    </div>
+
+    <p>I wanted to practise platform engineering end to end: GitOps, a service mesh, a secrets manager, metrics and single sign-on. I did not want a cloud bill, so everything runs on one VM with 8&nbsp;GB of RAM. This post covers the architecture, the trade-offs I made, and the failures that taught me the most.</p>
+
+    <p>Every change went through a small pull request that I reviewed and merged. The repo ended up with 33 PRs, and that count is part of the story.</p>
+
+    <h2>Architecture</h2>
+
+    <p>A request travels a surprising number of hops: my browser, Tailscale, a NodePort, the Istio gateway, the ambient mesh, and finally the pod. Meanwhile Argo CD pulls desired state from GitHub, External Secrets pulls values from Vault, and Grafana and Argo CD send logins to Entra ID.</p>
+
+    <figure>
+      <img src="img/architecture.png" alt="Architecture diagram: a browser reaches the Istio Gateway on NodePort 30443 over Tailscale; the gateway routes to podinfo, Argo CD, Vault and Grafana inside the ambient mesh; cert-manager, External Secrets and VictoriaMetrics run alongside; GitHub feeds Argo CD and Microsoft Entra ID provides OIDC login" loading="lazy">
+      <figcaption>The platform on one VM. Source: <code>architecture.drawio</code>, drawn in draw.io and kept next to the manifests.</figcaption>
+    </figure>
 
     <h2>The stack</h2>
 
@@ -89,6 +158,24 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
 
     <p>Nothing is exposed to the internet. The Istio gateway listens on a NodePort and is reached over <strong>Tailscale</strong>. For hostnames I skipped DNS entirely: <code>grafana.&lt;tailnet-ip&gt;.nip.io</code> resolves to the tailnet address, so I get real hostnames, real TLS and zero registrar work.</p>
 
+    <h2>Design decisions and trade-offs</h2>
+
+    <p>Each choice below was made for the 8&nbsp;GB budget first and for realism second. The last column is what I paid for it.</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Decision</th><th>Why</th><th>What it costs</th></tr></thead>
+      <tbody>
+        <tr><td>Istio <strong>ambient</strong>, not sidecars</td><td>One ztunnel per node instead of a proxy per pod</td><td>Extra network rules (HBONE, probe SNAT)</td></tr>
+        <tr><td>Cilium replaces kube-proxy and flannel</td><td>One component for networking and policy</td><td>Firewall and DNS interactions to debug</td></tr>
+        <tr><td>Gateway API, not Traefik</td><td>Standard API that Istio implements</td><td>Fewer ready-made examples</td></tr>
+        <tr><td>Tailscale + nip.io</td><td>Private access, real hostnames, no DNS to manage</td><td>Certificates are self-signed, so browsers warn</td></tr>
+        <tr><td>Single-node Vault, manual unseal</td><td>Smallest footprint, secrets stay out of Git</td><td>Unseal by hand after every reboot</td></tr>
+        <tr><td>Argo CD app-of-apps</td><td>The repo is the source of truth</td><td>A few cosmetic OutOfSync diffs</td></tr>
+      </tbody>
+    </table>
+    </div>
+
     <h2>Everything is a pull request</h2>
 
     <p>The rules I set for the repo were simple: one branch and one PR per intent, under 400 lines, a body that explains the why and the rollback, requests and limits on every workload, and nothing secret in Git. Argo CD then reconciles <code>main</code> into the cluster.</p>
@@ -103,13 +190,53 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     <h2>What broke, and what it taught me</h2>
 
     <h3>1. The firewall was eating the CNI</h3>
-    <p>With UFW enabled, pod traffic silently vanished. Cilium's interfaces (<code>cilium_host</code> and the <code>lxc*</code> devices) need explicit allow rules. The symptom was a node that looked fine and pods that could not talk to anything.</p>
+    <dl class="fix">
+      <dt>Symptom</dt><dd>The node looked healthy, but pods could not reach anything.</dd>
+      <dt>Root cause</dt><dd>UFW dropped traffic on Cilium's interfaces, <code>cilium_host</code> and the <code>lxc*</code> devices.</dd>
+      <dt>Fix</dt><dd>Allow both explicitly.</dd>
+    </dl>
+<pre><code>sudo ufw allow in on cilium_host
+sudo ufw allow in on lxc+</code></pre>
+    <p><strong>Lesson:</strong> when networking fails silently, check the host firewall before you blame the CNI.</p>
 
     <h3>2. A DNS rule that blackholed DNS</h3>
-    <p>External Secrets reported <code>ClusterSecretStore InvalidProviderConfig</code> with <em>context deadline exceeded</em>. The Vault login was timing out, and the root cause was DNS. My baseline policy used Cilium's L7 DNS rules (<code>rules.dns</code> with a wildcard), and in namespaces that are not in the ambient mesh that rule path dropped queries. Switching the baseline to plain L4 DNS egress fixed it. I proved it in a scratch namespace before touching the real policies.</p>
+    <dl class="fix">
+      <dt>Symptom</dt><dd>External Secrets reported <code>ClusterSecretStore InvalidProviderConfig</code> with <em>context deadline exceeded</em>.</dd>
+      <dt>Root cause</dt><dd>The Vault login timed out because DNS queries were dropped. My baseline policy used Cilium's L7 DNS rules (<code>rules.dns</code> with a wildcard), and in namespaces outside the ambient mesh that path blackholed queries.</dd>
+      <dt>Fix</dt><dd>Plain L4 DNS egress. I proved it in a scratch namespace before touching the shared policies.</dd>
+    </dl>
+<pre><code><span class="c"># before (simplified): L7 DNS inspection, queries were dropped</span>
+toPorts:
+  - ports: [{port: "53", protocol: ANY}]
+    rules: {dns: [{matchPattern: "*"}]}
+
+<span class="c"># after: L4 only</span>
+egress:
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+    toPorts:
+      - ports:
+          - {port: "53", protocol: ANY}</code></pre>
+    <p><strong>Lesson:</strong> test policy changes in a scratch namespace first. A wrong rule is much cheaper to find there.</p>
 
     <h3>3. Ambient mesh needs HBONE and probe SNAT</h3>
-    <p>podinfo returned 503 through the gateway even though the pod was healthy. In ambient mode the gateway talks to workloads over HBONE on <strong>TCP 15008</strong>, and my default-deny policy blocked it. I also had to allow the kubelet probe source address (<code>169.254.7.127</code>, the ztunnel SNAT) or readiness probes failed. The route to the app has more hops than it looks like: Tailscale, NodePort, gateway, ztunnel, pod.</p>
+    <dl class="fix">
+      <dt>Symptom</dt><dd>podinfo returned 503 through the gateway while the pod itself was healthy.</dd>
+      <dt>Root cause</dt><dd>In ambient mode the gateway reaches workloads over HBONE on <strong>TCP 15008</strong>, which my default-deny policy blocked. Readiness probes also failed, because the kubelet probe arrives from the ztunnel SNAT address <code>169.254.7.127</code>.</dd>
+      <dt>Fix</dt><dd>Allow 15008 from the gateway namespace and the SNAT address as an ingress source.</dd>
+    </dl>
+<pre><code>ingress:
+  - fromEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: istio-ingress
+    toPorts:
+      - ports:
+          - {port: "9898",  protocol: TCP}   <span class="c"># podinfo</span>
+          - {port: "15008", protocol: TCP}   <span class="c"># HBONE</span>
+  - fromCIDR: ["169.254.7.127/32"]           <span class="c"># kubelet probes via ztunnel SNAT</span></code></pre>
+    <p><strong>Lesson:</strong> the route to an app has more hops than it looks like: Tailscale, NodePort, gateway, ztunnel, pod. Each hop needs a rule.</p>
 
     <figure>
       <img src="img/podinfo.png" alt="podinfo greeting page served through the Istio gateway" loading="lazy">
@@ -117,8 +244,24 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     </figure>
 
     <h3>4. Death by OOMKill</h3>
-    <p>8&nbsp;GB goes quickly when a Kubernetes control plane, a mesh and a metrics stack share a node. In order, the OOM kills were: the Argo CD application controller, VictoriaMetrics <code>vmsingle</code>, <code>vmagent</code>, and finally Grafana itself, which is CPU and memory hungry while it loads its bundled dashboards.</p>
-    <p>The two changes that mattered most were setting honest requests and limits everywhere, and dropping the very high-cardinality kube-apiserver histogram series (<code>apiserver_request_duration_seconds_bucket</code> and friends) at scrape time. That alone removed a large share of the metrics volume. The funniest culprit was my own screenshot tooling: a headless Chrome was the biggest process on the box more than once, so it now gets killed after every run.</p>
+    <dl class="fix">
+      <dt>Symptom</dt><dd>Pods restarting, then Grafana in <code>CrashLoopBackOff</code> and the UI returning 503.</dd>
+      <dt>Root cause</dt><dd>8&nbsp;GB goes quickly when a control plane, a mesh and a metrics stack share a node. The kills came in this order: the Argo CD application controller, VictoriaMetrics <code>vmsingle</code>, <code>vmagent</code>, and finally Grafana, which is hungry while it loads its bundled dashboards.</dd>
+      <dt>Fix</dt><dd>Honest requests and limits everywhere, and dropping very high-cardinality kube-apiserver histograms at scrape time.</dd>
+    </dl>
+<pre><code>Last State:  Terminated
+  Reason:    <span class="e">OOMKilled</span>
+  Exit Code: <span class="e">137</span></code></pre>
+<pre><code><span class="c"># vmsingle scrape config: drop series I will never query</span>
+metricRelabelConfigs:
+  - action: drop
+    source_labels: [__name__]
+    regex: apiserver_request_(slo_)?duration_seconds_bucket|apiserver_response_sizes_bucket|apiserver_watch_events_sizes_bucket
+
+<span class="c"># grafana</span>
+resources:
+  limits: {memory: 512Mi}   <span class="c"># was 256Mi</span></code></pre>
+    <p><strong>Lesson:</strong> dropping metrics you never query is the cheapest memory you will ever save. The funniest culprit was my own screenshot tooling: a headless Chrome was the biggest process on the box more than once, so it now gets killed after every run.</p>
 
     <figure>
       <img src="img/grafana-dashboard.png" alt="Grafana Kubernetes compute resources dashboard showing memory utilisation at 88 percent and memory limits committed at 99.5 percent" loading="lazy">
@@ -126,12 +269,37 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     </figure>
 
     <h3>5. Vault is a manual step, on purpose</h3>
-    <p>Vault runs as a single node with one key share, initialised and unsealed by hand. The init output stays on the host and never touches Git. External Secrets then pulls values into Kubernetes secrets through a <code>ClusterSecretStore</code> using Kubernetes auth. The trade-off is that Vault needs unsealing after every reboot. For a lab I accept that; for production I would use auto-unseal.</p>
+    <p>Vault runs as a single node with one key share, initialised and unsealed by hand. The init output stays on the host and never touches Git. External Secrets then pulls values into Kubernetes secrets through a <code>ClusterSecretStore</code> using Kubernetes auth.</p>
+    <p>The trade-off is that Vault needs unsealing after every reboot. For a lab I accept that; for production I would use auto-unseal.</p>
 
     <figure>
       <img src="img/vault-login.png" alt="Vault UI sign-in page served over the gateway" loading="lazy">
       <figcaption>The Vault UI behind the same gateway, with TLS from the lab CA.</figcaption>
     </figure>
+
+    <h2>Where the memory goes</h2>
+
+    <p>This is the working set per namespace from <code>kubectl top</code>, taken after everything had settled. Observability is the biggest tenant by far, which is why the metric-dropping fix mattered so much.</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Namespace</th><th>What lives there</th><th class="num">MiB</th></tr></thead>
+      <tbody>
+        <tr><td>monitoring</td><td>VictoriaMetrics, vmagent, Grafana</td><td class="num">1,493</td></tr>
+        <tr><td>argocd</td><td>Argo CD</td><td class="num">510</td></tr>
+        <tr><td>kube-system</td><td>Cilium, CoreDNS, Hubble relay, metrics-server</td><td class="num">498</td></tr>
+        <tr><td>external-secrets</td><td>External Secrets Operator</td><td class="num">125</td></tr>
+        <tr><td>istio-system</td><td>istiod, ztunnel, istio-cni</td><td class="num">106</td></tr>
+        <tr><td>cert-manager</td><td>cert-manager</td><td class="num">101</td></tr>
+        <tr><td>vault</td><td>Vault</td><td class="num">60</td></tr>
+        <tr><td>istio-ingress</td><td>Gateway</td><td class="num">36</td></tr>
+        <tr><td>demo</td><td>podinfo</td><td class="num">32</td></tr>
+        <tr class="total"><td>Pods total</td><td></td><td class="num">2,961</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>The k3s server process itself uses about 1.9&nbsp;GiB on top of that, and the rest goes to the OS and Tailscale. Node memory reads about 6.3&nbsp;GiB, or 90%, so there is very little headroom.</p>
 
     <h2>Single sign-on with Entra ID</h2>
 
@@ -145,10 +313,30 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
       <li>Argo CD's own values are applied by Helm, not by Git, so changing them means a <code>helm upgrade</code> on the node.</li>
     </ul>
 
+<pre><code>target:
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: argocd   <span class="c"># required for $secret:key lookups</span>
+data:
+  - secretKey: client_secret
+    remoteRef: {key: entra/argocd, property: client_secret}</code></pre>
+
     <figure>
       <img src="img/grafana-login.png" alt="Grafana login page with a Sign in with Microsoft Entra ID button" loading="lazy">
       <figcaption>Grafana now offers “Sign in with Microsoft Entra ID” next to the local admin login.</figcaption>
     </figure>
+
+    <h2>Limits of this setup</h2>
+
+    <p>This is a lab, and I would not run it as it stands for anything that matters:</p>
+    <ul>
+      <li><strong>No high availability.</strong> One node means one failure domain.</li>
+      <li><strong>Vault is fragile on purpose.</strong> One key share, manual unseal, and no tested backup of the init material yet.</li>
+      <li><strong>Memory is at the edge.</strong> A new workload means retuning limits elsewhere, and optional integrations such as Datadog are switched off for that reason.</li>
+      <li><strong>Self-signed certificates.</strong> Browsers warn until the lab CA is trusted.</li>
+      <li><strong>Entra ID login is configured but I have not yet completed an interactive sign-in end to end.</strong> The button, the secrets and the redirect settings are in place.</li>
+    </ul>
 
     <h2>What I would tell my past self</h2>
 
@@ -159,12 +347,25 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     <ul>
       <li>Test network policy changes in a scratch namespace before they hit shared ones.</li>
       <li>Set requests <em>and</em> limits from day one, then raise limits only when you see an OOMKill.</li>
-      <li>Drop metrics you will never query. It is the cheapest memory you will ever save.</li>
+      <li>Drop metrics you will never query.</li>
       <li>Keep secrets out of Git by design, not by discipline: Vault plus External Secrets made that automatic.</li>
       <li>Small PRs turn debugging into documentation.</li>
     </ul>
 
-    <p>Next up: back up the Vault init material properly, rotate the Entra client secrets before they expire, and bring the optional observability integrations back once the memory budget allows it.</p>
+    <h2>Next steps</h2>
+
+    <ul>
+      <li>Back up the Vault init material properly and move to auto-unseal.</li>
+      <li>Rotate the Entra client secrets before they expire in a year.</li>
+      <li>Delete the initial Argo CD admin secret once SSO is confirmed.</li>
+      <li>Bring the optional observability integrations back once the memory budget allows it.</li>
+    </ul>
+
+    <div class="cta">
+      <p>If you have run Istio ambient or Cilium on a small node and hit different walls, I would like to hear about it. Leave a comment below or find me on <a href="https://linkedin.com/in/abbasumair-au" target="_blank" rel="noopener">LinkedIn</a>. The lab repository is private for now; if you want to compare manifests, ask and I will share the relevant parts.</p>
+    </div>
+
+    <p><em>A note on redaction: the tailnet address, tenant and subscription identifiers and every secret have been removed or replaced with placeholders. The screenshots come from the live cluster.</em></p>
 
   </div>
 

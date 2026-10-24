@@ -120,6 +120,11 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     <p>8&nbsp;GB goes quickly when a Kubernetes control plane, a mesh and a metrics stack share a node. In order, the OOM kills were: the Argo CD application controller, VictoriaMetrics <code>vmsingle</code>, <code>vmagent</code>, and finally Grafana itself, which is CPU and memory hungry while it loads its bundled dashboards.</p>
     <p>The two changes that mattered most were setting honest requests and limits everywhere, and dropping the very high-cardinality kube-apiserver histogram series (<code>apiserver_request_duration_seconds_bucket</code> and friends) at scrape time. That alone removed a large share of the metrics volume. The funniest culprit was my own screenshot tooling: a headless Chrome was the biggest process on the box more than once, so it now gets killed after every run.</p>
 
+    <figure>
+      <img src="img/grafana-dashboard.png" alt="Grafana Kubernetes compute resources dashboard showing memory utilisation at 88 percent and memory limits committed at 99.5 percent" loading="lazy">
+      <figcaption>Grafana, Kubernetes / Compute Resources / Cluster, last three hours. Memory utilisation sits at 88% and committed limits at 99.5%: this is what “tight” looks like on 8&nbsp;GB.</figcaption>
+    </figure>
+
     <h3>5. Vault is a manual step, on purpose</h3>
     <p>Vault runs as a single node with one key share, initialised and unsealed by hand. The init output stays on the host and never touches Git. External Secrets then pulls values into Kubernetes secrets through a <code>ClusterSecretStore</code> using Kubernetes auth. The trade-off is that Vault needs unsealing after every reboot. For a lab I accept that; for production I would use auto-unseal.</p>
 

@@ -113,9 +113,9 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
 
   <div class="post-body">
 
-    <p>I have one OVH VM with 8&nbsp;GB of RAM, and I wanted to run something on it that looks like a real platform: GitOps, a service mesh, Vault, metrics and single sign-on. It works now. Argo CD syncs 15 apps from Git, Grafana and Argo CD both log in through Entra ID, and nothing is reachable from the internet. It also took a lot of failed attempts, and the node is running at about 90% memory, so this is more a story about squeezing things in than about a clean reference setup.</p>
+    <p>I have one OVH VM with 8&nbsp;GB of RAM, and I wanted to run something on it that looks like a real platform: GitOps, a service mesh, Vault, metrics and single sign-on. It works now. Argo CD syncs 15 apps from Git, Grafana and Argo CD both log in through Entra ID, and nothing is reachable from the internet. Getting there took a lot of fixes, and the node is running at about 90% memory, so this is more a story about squeezing things in than about a clean reference setup.</p>
 
-    <p>The whole thing lives in a private repo with 33 merged pull requests. I made a rule early on that every change is its own small PR, and it paid off more than I expected. When something broke, the fix was a short diff I could actually review.</p>
+    <p>The whole thing lives in a private repo with 33 merged pull requests. The repo has one rule that every change is its own small PR, so when something broke, the fix was a short diff I could review.</p>
 
     <h2>What it looks like</h2>
 
@@ -130,9 +130,9 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
 
     <h2>Why these choices</h2>
 
-    <p>Memory drove most of it. Istio ambient instead of sidecars means one ztunnel per node, not an extra proxy in every pod, and on 8&nbsp;GB that difference is real. Cilium replaces both flannel and kube-proxy, so there's one thing to learn and run instead of three. I picked the Gateway API over Traefik because Istio implements it, even though there were fewer examples to copy from.</p>
+    <p>Memory drove most of it. Istio ambient instead of sidecars means one ztunnel per node, not an extra proxy in every pod, and on 8&nbsp;GB that difference is real. Cilium replaces both flannel and kube-proxy. For ingress I used the Gateway API, which Istio implements, instead of Traefik.</p>
 
-    <p>Vault is a single node with one unseal key, and I unseal it by hand after every reboot. That's annoying and I wouldn't do it in production, but it's the smallest footprint and it keeps secrets out of Git, which was the point. The self-signed CA means browsers complain until you trust it. I decided I could live with that on a private lab.</p>
+    <p>Vault is a single node with one unseal key, and I unseal it by hand after every reboot. It's the smallest footprint, and it keeps secrets out of Git. For production I'd want auto-unseal. The CA is self-signed, so browsers complain until you trust it.</p>
 
     <figure>
       <img src="img/argocd-apps.png" alt="Argo CD applications list showing the platform apps Healthy and Synced" loading="lazy">
@@ -142,13 +142,13 @@ footer p{font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace}
     <h2>What broke</h2>
 
     <h3>The firewall ate the CNI</h3>
-    <p>For a while I had a node that looked completely healthy where pods couldn't talk to anything. The cause was UFW. It was dropping traffic on Cilium's interfaces, <code>cilium_host</code> and the <code>lxc*</code> devices, and nothing in Kubernetes told me. Two rules fixed it:</p>
+    <p>The node looked fine, but pods couldn't talk to anything. The cause was UFW, which was dropping traffic on Cilium's interfaces, <code>cilium_host</code> and the <code>lxc*</code> devices. Two rules fixed it:</p>
 <pre><code>sudo ufw allow in on cilium_host
 sudo ufw allow in on lxc+</code></pre>
     <p>If networking fails with no errors, look at the host firewall before the CNI.</p>
 
     <h3>A DNS policy that blackholed DNS</h3>
-    <p>External Secrets kept reporting <code>ClusterSecretStore InvalidProviderConfig</code> with <em>context deadline exceeded</em>. It looked like a Vault problem, but the Vault login was timing out because DNS queries weren't getting answered. My baseline policy used Cilium's L7 DNS rules, and in namespaces outside the ambient mesh those rules dropped the queries. I switched to plain L4 egress on port 53 and it started working. I tested that in a scratch namespace first, because I'd already broken enough shared policy by then.</p>
+    <p>External Secrets kept reporting <code>ClusterSecretStore InvalidProviderConfig</code> with <em>context deadline exceeded</em>. It looked like a Vault problem, but the Vault login was timing out because DNS queries weren't getting answered. My baseline policy used Cilium's L7 DNS rules, and in namespaces outside the ambient mesh those rules dropped the queries. I switched to plain L4 egress on port 53 and it started working. I tested that in a scratch namespace before touching the shared policies.</p>
 <pre><code><span class="c"># before (simplified): L7 DNS rules, queries were dropped</span>
 toPorts:
   - ports: [{port: "53", protocol: ANY}]
@@ -183,7 +183,7 @@ egress:
     </figure>
 
     <h3>Out of memory, repeatedly</h3>
-    <p>This was the longest fight. Things got OOMKilled one after another: the Argo CD application controller, then VictoriaMetrics <code>vmsingle</code>, then <code>vmagent</code>, and finally Grafana. Grafana was in <code>CrashLoopBackOff</code> and the UI returned 503. It turns out it uses a lot of CPU and memory while loading its bundled dashboards, and my 256Mi limit wasn't enough.</p>
+    <p>Things got OOMKilled one after another: the Argo CD application controller, then VictoriaMetrics <code>vmsingle</code>, then <code>vmagent</code>, and finally Grafana. Grafana was in <code>CrashLoopBackOff</code> and the UI returned 503. It turns out it uses a lot of CPU and memory while loading its bundled dashboards, and my 256Mi limit wasn't enough.</p>
 <pre><code>Last State:  Terminated
   Reason:    <span class="e">OOMKilled</span>
   Exit Code: <span class="e">137</span></code></pre>
@@ -192,7 +192,7 @@ egress:
   - action: drop
     source_labels: [__name__]
     regex: apiserver_request_(slo_)?duration_seconds_bucket|apiserver_response_sizes_bucket|apiserver_watch_events_sizes_bucket</code></pre>
-    <p>The embarrassing part is that my own screenshot tooling was one of the culprits. A headless Chrome turned out to be the biggest process on the box more than once. I now kill it after every run.</p>
+    <p>One of the culprits was my own screenshot tooling: a headless Chrome was the biggest process on the box more than once, so it now gets killed after every run.</p>
 
     <figure>
       <img src="img/grafana-dashboard.png" alt="Grafana Kubernetes compute resources dashboard showing memory utilisation at 88 percent and memory limits committed at 99.5 percent" loading="lazy">
@@ -231,7 +231,7 @@ egress:
 
     <h2>Single sign-on with Entra ID</h2>
 
-    <p>Grafana and Argo CD both use Entra ID over OIDC. I create the client secrets in Entra, store them in Vault, and External Secrets delivers them to the pods, so they never show up in the repo. I hit a handful of small things along the way:</p>
+    <p>Grafana and Argo CD both use Entra ID over OIDC, and I've tested sign-in end to end. I create the client secrets in Entra, store them in Vault, and External Secrets delivers them to the pods, so they never show up in the repo. I hit a handful of small things along the way:</p>
 
     <ul>
       <li>Argo CD only resolves <code>$secretname:key</code> references from secrets labelled <code>app.kubernetes.io/part-of: argocd</code>, so the ExternalSecret template has to add that label.</li>
@@ -256,13 +256,13 @@ data:
 
     <h2>Where it falls short</h2>
 
-    <p>It's one node, so there's no high availability. Vault has a single key share and I haven't tested a backup of it yet. Memory is so tight that adding anything means trimming limits somewhere else, which is why Datadog is switched off. And although the Entra button, the secrets and the redirect settings are all in place, I haven't yet completed a full interactive sign-in through it.</p>
+    <p>It's one node, so there's no high availability. Vault has a single key share and I haven't tested a backup of it yet. Memory limits are 99.5% committed, so there's little room to add anything, and Datadog is currently switched off.</p>
 
     <h2>What's next</h2>
 
-    <p>First I want to back up the Vault init material properly and look at auto-unseal. I also need to rotate the Entra client secrets before they expire in a year, and delete the initial Argo CD admin secret once I've confirmed SSO works.</p>
+    <p>First I want to back up the Vault init material properly and look at auto-unseal. I also need to rotate the Entra client secrets before they expire in a year, and delete the initial Argo CD admin secret now that Entra sign-in works.</p>
 
-    <p>If you've run Istio ambient or Cilium on a small node and hit different problems, I'd like to hear about it. Leave a comment below or find me on <a href="https://linkedin.com/in/abbasumair-au" target="_blank" rel="noopener">LinkedIn</a>. The repo is private for now, but I'm happy to share parts of it if you ask.</p>
+    <p>Comments are open below, and you can find me on <a href="https://linkedin.com/in/abbasumair-au" target="_blank" rel="noopener">LinkedIn</a>. The repo is private for now.</p>
 
     <p><em>I've removed or replaced the tailnet address, tenant and subscription IDs and all secrets. The screenshots are from the live cluster.</em></p>
 
